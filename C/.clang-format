@@ -1,0 +1,48 @@
+# Team-owned formatting configuration. Validated and pinned to clang-format 19.1.7.
+# A version change requires a dedicated formatting-diff review before adoption.
+# Apply only to team-maintained C/H files. Do not format vendor libraries,
+# CMSIS, the FreeRTOS kernel, generated code, startup files, or assembly.
+---
+Language: Cpp
+BasedOnStyle: LLVM
+
+# Indentation
+UseTab: Never
+TabWidth: 4
+IndentWidth: 4
+ContinuationIndentWidth: 4
+IndentCaseLabels: true
+IndentGotoLabels: false
+IndentPPDirectives: None
+
+# Line layout
+ColumnLimit: 100
+BreakBeforeBraces: Attach
+DerivePointerAlignment: false
+PointerAlignment: Right
+
+# Keep compound statements expanded and reviewable.
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# Preserve the project-defined include groups and order. Embedded headers may
+# have ordering constraints that clang-format cannot infer.
+SortIncludes: Never
+IncludeBlocks: Preserve
+
+# Avoid rewriting intentional technical comments; formatting comments remains
+# a review responsibility.
+ReflowComments: false
+MaxEmptyLinesToKeep: 1
+KeepEmptyLinesAtTheStartOfBlocks: false
+InsertNewlineAtEOF: true
+
+# Basic spacing policy
+SpaceBeforeParens: ControlStatements
+BreakBeforeBinaryOperators: None
+BreakBeforeTernaryOperators: true
+...
