@@ -5,11 +5,12 @@
 
 ## 1. BARR-C:2018
 
-- 文件：`BARR-C/BARR-C-2018-Embedded-C-Coding-Standard.pdf`
 - 官方来源：<https://barrgroup.com/sites/default/files/barr_c_coding_standard_2018.pdf>
+- 本地文件（不入库）：`BARR-C/BARR-C-2018-Embedded-C-Coding-Standard.pdf`
 - SHA-256：`D9465E8EABB67243DF8D581992653A2C37D517C9328656CD12DA3B946674E7D4`
 - 用途：嵌入式 C 的数据类型、函数、宏、命名、可维护性与常见缺陷防护实践。
-- 使用限制：该 PDF 受 Barr Group 版权保护。仅供团队内部参考；不得把该副本或其全文对外发布、再分发。对外公开仓库只应保留团队自行编写的规范和指向官方来源的链接。
+- 使用限制：该 PDF 受 Barr Group 版权保护。仅供团队内部参考；不得把该副本或其全文对外发布、再分发。公开仓库只保留获取说明、团队自行编写的规范和官方链接。
+- 获取方式：需要离线查阅时，按 [`BARR-C/README.md`](BARR-C/README.md) 自行下载到上述路径；该 PDF 已被 `.gitignore` 排除。
 
 ## 2. Zephyr：工程约束与检查配置
 

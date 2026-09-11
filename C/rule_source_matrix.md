@@ -26,7 +26,7 @@ BARR-C、MISRA-C、Zephyr 或 OpenTitan 的合规声明；`rules/` 权威分片�
 
 | 代号 | 本地依据 | 主要用途 |
 | --- | --- | --- |
-| `BARR` | [`BARR-C-2018-Embedded-C-Coding-Standard.pdf`](../规范依据/C/BARR-C/BARR-C-2018-Embedded-C-Coding-Standard.pdf) | 嵌入式 C 的模块、类型、函数、命名、宏和缺陷防护实践。 |
+| `BARR` | [BARR-C:2018 官方 PDF](https://barrgroup.com/sites/default/files/barr_c_coding_standard_2018.pdf)（[本地获取说明](../规范依据/C/BARR-C/README.md)） | 嵌入式 C 的模块、类型、函数、命名、宏和缺陷防护实践。 |
 | `Z-CG` | [`zephyr-coding-guidelines.rst`](../规范依据/C/Zephyr/zephyr-coding-guidelines.rst) | MISRA-C 子集式工程规则、严重度、可追溯性和可检查性。 |
 | `Z-STYLE` | [`zephyr-c-code-style.rst`](../规范依据/C/Zephyr/zephyr-c-code-style.rst)、[`zephyr-naming-conventions.rst`](../规范依据/C/Zephyr/zephyr-naming-conventions.rst) | 新改动风格、命名、100 列、完整花括号和公共符号前缀。 |
 | `Z-TOOL` | [`zephyr-clang-format`](../规范依据/C/Zephyr/zephyr-clang-format)、[`zephyr-checkpatch.conf`](../规范依据/C/Zephyr/zephyr-checkpatch.conf) | 自动检查的工程化方式；配置只作对照，不直接复制。 |
@@ -102,8 +102,8 @@ BARR-C、MISRA-C、Zephyr 或 OpenTitan 的合规声明；`rules/` 权威分片�
 
 ## 5. 许可证与引用边界
 
-1. BARR-C PDF 受 Barr Group 版权保护，只保留为团队内部证据；不得对外发布、再分发全文，
-   团队规范只做自行表述和必要的短引用，并指向官方来源。
+1. BARR-C PDF 受 Barr Group 版权保护，只允许作为团队内部离线证据；不得对外发布、再分发全文。
+   公开仓库只保留官方链接和 [`BARR-C/README.md`](../规范依据/C/BARR-C/README.md)，团队规范只做自行表述和必要的短引用。
 2. Zephyr 仓库顶层采用 Apache-2.0；本地许可证见 [`Zephyr/LICENSE`](../规范依据/C/Zephyr/LICENSE)。下载的 `zephyr-clang-format` 也明确带
    `SPDX-License-Identifier: Apache-2.0`。若复制或修改并分发其原文件，必须保留版权、
    许可证和适用的 NOTICE；`checkpatch` 工具本身为 GPL 许可，不把该工具源码并入本项目。
