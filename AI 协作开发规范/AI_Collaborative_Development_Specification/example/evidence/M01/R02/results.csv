@@ -1,0 +1,4 @@
+kind,candidate,case_id,result,evidence_file
+DEMO_ONLY,DEMO-M01-R2,M01-T02,PASS,evidence/M01/R02/observations.log
+DEMO_ONLY,DEMO-M01-R2,M01-T04,PASS,evidence/M01/R02/observations.log
+DEMO_ONLY,DEMO-M01-R2,M01-T05,PASS,evidence/M01/R02/observations.log

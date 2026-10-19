@@ -1,0 +1,35 @@
+{
+  "kind": "DEMO_ONLY",
+  "stores": {
+    "internal_flash": {
+      "capacity": 262144,
+      "regions": [
+        {
+          "name": "boot",
+          "offset": 0,
+          "length": 32768
+        },
+        {
+          "name": "app",
+          "offset": 32768,
+          "length": 229376
+        }
+      ]
+    },
+    "external_nor": {
+      "capacity": 8388608,
+      "regions": [
+        {
+          "name": "metadata",
+          "offset": 0,
+          "length": 8192
+        },
+        {
+          "name": "backup",
+          "offset": 8192,
+          "length": 229376
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+DEMO_ONLY - synthetic targeted retest, no firmware or board was executed.
+M01-T02 candidate=DEMO-M01-R2 backup_valid=yes new_app_confirmed=yes result=PASS
+M01-T04 candidate=DEMO-M01-R2 trial_failed=yes valid_old_app_restored=yes result=PASS
+M01-T05 candidate=DEMO-M01-R2 valid_backup=no repair_rejected_before_erase=yes app_unchanged=yes result=PASS
+R01 remains unchanged. C-REUSE-01 allows only T01, T03, and T06 from R01.
+These statements illustrate required observations. They are not measurements.

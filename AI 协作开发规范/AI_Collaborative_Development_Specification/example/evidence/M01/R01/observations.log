@@ -1,0 +1,8 @@
+DEMO_ONLY - synthetic scenario, no firmware or board was executed.
+M01-T01 candidate=DEMO-M01-R1 startup_identity=expected app_confirmed=yes result=PASS
+M01-T02 candidate=DEMO-M01-R1 backup_valid=yes new_app_confirmed=yes result=PASS
+M01-T03 candidate=DEMO-M01-R1 damaged_package=rejected app_unchanged=yes result=PASS
+M01-T04 candidate=DEMO-M01-R1 trial_failed=yes valid_old_app_restored=yes result=PASS
+M01-T05 candidate=DEMO-M01-R1 valid_backup=no repair_rejected_after_erase=yes app_unchanged=no result=FAIL
+M01-T06 candidate=DEMO-M01-R1 reset_point=one_approved_install_boundary state_recovered=yes result=PASS
+These statements illustrate required observations. They are not measurements.
