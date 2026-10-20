@@ -1,0 +1,165 @@
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import tempfile
+import threading
+import unittest
+from unittest.mock import patch
+import uuid
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from session_handover_tool import ToolError
+from session_handover_tool.adapters.base import bridge
+from session_handover_tool.adapters.codex_app import AppTools, CodexApp
+from session_handover_tool.adapters.deepseek_harness import DeepSeekHarness
+from session_handover_tool.adapters.native.antigravity_rpc import Antigravity, select_catalog
+
+TEST_ROOT = Path(os.environ.get("SESSION_TOOL_TEST_ROOT") or ("C:/bobo_worktool/session-handover-tool/tests" if os.name == "nt" else tempfile.gettempdir() + "/session-handover-tool-tests"))
+NODE = shutil.which("node")
+
+
+class NativeContracts(unittest.TestCase):
+    def setUp(self):
+        TEST_ROOT.mkdir(parents=True, exist_ok=True)
+        self.temporary = tempfile.TemporaryDirectory(prefix="native-", dir=TEST_ROOT)
+        self.root = Path(self.temporary.name)
+        self.calls, self.running, self.selected, self.reject_rename = [], False, {}, False
+        self.sid = "session-" + str(uuid.uuid4())
+        owner = self
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self, *_):pass
+            def do_POST(self):
+                data = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+                endpoint = self.path.removeprefix("/api/")
+                if self.path.startswith("/api/"):
+                    args = data["payload"]["args"]; owner.calls.append((endpoint, args))
+                    if endpoint == "workspace/create":value = {"workspace":{"workspaceId":"workspace-test"}}
+                    elif endpoint == "session/create":value = {"sessionId":owner.sid}
+                    elif endpoint == "session/rename" and owner.reject_rename:
+                        self.send_response(503); self.end_headers(); return
+                    elif endpoint == "session/list":value = {"items":[{"sessionId":owner.sid,"cwd":str(owner.root),"running":owner.running}]}
+                    elif endpoint == "session/projections":value = {"values":{"modelSelection":owner.selected}}
+                    elif endpoint == "session/selectModel":
+                        owner.selected = {k:v for k,v in args["request"].items() if k != "sessionId"}
+                        value = {"selected":owner.selected}
+                    elif endpoint == "session/prompt":value = {"accepted":True}
+                    else:value = {}
+                    response = {"type":"server-response","result":{"ok":True,"value":value}}
+                else:
+                    endpoint = self.path.rsplit("/",1)[-1]; owner.calls.append((endpoint,data))
+                    if endpoint == "GetUserStatus":response = owner.catalog
+                    elif endpoint == "StartCascade":response = {"cascadeId":data["cascadeId"]}
+                    elif endpoint == "GetConversationMetadata":response = {"metadata":{"projectId":"native-project","workspaces":[{"workspaceFolderAbsoluteUri":owner.root.as_uri()}]}}
+                    elif endpoint == "GetAllCascadeTrajectories":response = {"trajectorySummaries":{owner.anti_sid:{"status":"CASCADE_RUN_STATUS_IDLE"}}}
+                    elif endpoint == "GetCascadeTrajectory":response = {"trajectory":{}}
+                    else:response = {}
+                body = json.dumps(response).encode()
+                self.send_response(200); self.send_header("Content-Type","application/json"); self.send_header("Content-Length",str(len(body))); self.end_headers(); self.wfile.write(body)
+        self.server = ThreadingHTTPServer(("127.0.0.1",0),Handler)
+        self.thread = threading.Thread(target=self.server.serve_forever,daemon=True); self.thread.start()
+        self.authority = "127.0.0.1:" + str(self.server.server_port)
+        credential = self.root/"test-credential.yaml"
+        credential.write_text("secret: " + "A"*43, encoding="utf-8")
+        self.target = {"adapter":"deepseek_harness","native_id":self.sid,"cwd":str(self.root),"native":{
+            "provider":"fixture-provider","model":"fixture-model","reasoning_effort":"fixture-effort"},
+            "connection":{"authority":self.authority,"credentials":str(credential),"node":NODE or "node"}}
+        self.anti_sid = str(uuid.uuid4())
+        self.catalog = {"userStatus":{"cascadeModelConfigData":{"clientModelConfigs":[{
+            "modelId":"fixture-id","label":"Fixture High","modelOrAlias":{"model":"FIXTURE_NATIVE"}}]}}}
+        self.anti_target = {"model":"fixture-id","model_label":"Fixture High","native_model":"FIXTURE_NATIVE",
+            "cwd":str(self.root),"driver":{"project_id":"native-project"}}
+
+    def tearDown(self):
+        self.server.shutdown(); self.server.server_close(); self.thread.join(timeout=2); self.temporary.cleanup()
+
+    @unittest.skipUnless(NODE, "Node.js is unavailable")
+    def test_deepseek_create_select_inspect_and_unicode_dispatch(self):
+        agent = DeepSeekHarness()
+        created = agent.create({k:v for k,v in self.target.items() if k != "native_id"}, self.root,
+            request_id="create-test",title="隔离验证 🧪",message="")
+        self.assertEqual(self.sid, created["native_id"])
+        self.assertEqual("idle", created["state"])
+        result = agent.send(self.target,"只回复确认，禁止读写文件 🧪",self.root,request_id="send-test")
+        self.assertTrue(result["accepted"])
+        prompt = next(args["request"] for endpoint,args in self.calls if endpoint == "session/prompt")
+        self.assertIn("🧪",prompt["content"][0]["text"])
+        self.assertEqual("UTC",prompt["clientTimeZone"])
+        self.assertEqual("fixture-effort", self.selected["reasoningEffort"])
+
+    @unittest.skipUnless(NODE, "Node.js is unavailable")
+    def test_deepseek_partial_create_retains_native_identity(self):
+        self.reject_rename = True
+        with self.assertRaises(ToolError) as caught:
+            DeepSeekHarness().create(self.target,self.root,request_id="partial",title="test",message="")
+        self.assertTrue(caught.exception.uncertain)
+        self.assertEqual(self.sid,caught.exception.details["native_id"])
+        self.assertEqual(1,len([x for x in self.calls if x[0] == "session/create"]))
+
+    @unittest.skipUnless(NODE, "Node.js is unavailable")
+    def test_deepseek_running_never_selects_or_sends(self):
+        self.running = True
+        with self.assertRaises(ToolError) as caught:DeepSeekHarness().send(self.target,"x",self.root,request_id="busy")
+        self.assertEqual("busy",caught.exception.code)
+        self.assertFalse(any(endpoint in ("session/selectModel","session/prompt") for endpoint,_ in self.calls))
+
+    def test_antigravity_native_variant_catalog(self):
+        self.assertEqual("FIXTURE_NATIVE", select_catalog(self.anti_target,self.catalog)["native_model"])
+        self.catalog["userStatus"]["cascadeModelConfigData"]["clientModelConfigs"][0]["modelOrAlias"]["model"] = "CHANGED"
+        with self.assertRaises(ToolError):select_catalog(self.anti_target,self.catalog)
+
+    def test_antigravity_rpc_workspace_and_native_model_fields(self):
+        with patch.dict(os.environ,{"ANTIGRAVITY_LS_ADDRESS":"http://"+self.authority,"ANTIGRAVITY_CSRF_TOKEN":"fixture-only"}):
+            result = Antigravity(self.anti_target).send(self.anti_sid,"确认 🧪")
+        self.assertTrue(result["accepted"])
+        sent = next(body for method,body in self.calls if method == "SendUserCascadeMessage")
+        self.assertEqual("FIXTURE_NATIVE",sent["cascadeConfig"]["plannerConfig"]["planModel"])
+        self.assertEqual("确认 🧪",sent["items"][0]["text"])
+
+    def test_antigravity_exhausted_model_does_not_block_stop_inspection(self):
+        self.catalog["userStatus"]["cascadeModelConfigData"]["clientModelConfigs"][0]["disabled"] = True
+        with patch.dict(os.environ,{"ANTIGRAVITY_LS_ADDRESS":"http://"+self.authority,"ANTIGRAVITY_CSRF_TOKEN":"fixture-only"}):
+            result = Antigravity(self.anti_target).inspect(self.anti_sid)
+            with self.assertRaises(ToolError):Antigravity(self.anti_target).send(self.anti_sid,"must not send")
+        self.assertEqual("CASCADE_RUN_STATUS_IDLE",result["status"])
+        self.assertEqual("model_unavailable",result["model_catalog_error"]["code"])
+        self.assertFalse(any(method == "SendUserCascadeMessage" for method,_ in self.calls))
+
+    def test_bridge_timeout_retains_intermediate_created_id(self):
+        partial = (json.dumps({"created":True,"session_id":self.sid}) + "\n").encode()
+        with patch("subprocess.run",side_effect=subprocess.TimeoutExpired("fixture",1,output=partial)):
+            with self.assertRaises(ToolError) as caught:bridge(["unused"],self.target,"create",runtime=self.root)
+        self.assertTrue(caught.exception.uncertain)
+        self.assertEqual(self.sid,caught.exception.details["native_id"])
+
+    def test_bridge_known_failure_not_unknown(self):
+        result = subprocess.CompletedProcess([],1,stdout=b'{"ok":false,"code":"busy","message":"idle required","uncertain":false}\n')
+        with patch("subprocess.run",return_value=result):
+            with self.assertRaises(ToolError) as caught:bridge(["unused"],self.target,"send",runtime=self.root)
+        self.assertFalse(caught.exception.uncertain)
+
+    @unittest.skipUnless(NODE, "Node.js is unavailable")
+    def test_app_jsonrpc_handshake_and_unicode_arguments(self):
+        target = {"cwd":str(self.root),"connection":{"node":NODE,"server_script":str(Path(__file__).parent/"fixtures/app_tools.cjs"),"pipe_path":"fixture-pipe","pipe_path_env":"UNSET_TEST_PIPE"}}
+        with AppTools(target) as host:
+            result = host.call("send_message_to_thread",{"threadId":str(uuid.uuid4()),"prompt":"中文 🧪 $()"})
+        self.assertEqual("中文 🧪 $()",result["echoed"])
+
+    @unittest.skipUnless(NODE, "Node.js is unavailable")
+    def test_app_native_metadata_and_idle_state(self):
+        target = {"adapter":"codex_app","native_id":str(uuid.uuid4()),"cwd":str(self.root),"native":{"inherit_model":True},
+            "connection":{"node":NODE,"server_script":str(Path(__file__).parent/"fixtures/app_tools.cjs"),
+                "pipe_path":"fixture-pipe","pipe_path_env":"UNSET_TEST_PIPE","codex_home":str(self.root/"empty-home")}}
+        result = CodexApp().inspect(target,self.root)
+        self.assertEqual("idle",result["state"])
+        self.assertEqual("app_tools",result["verification"]["workspace_source"])
+
+    def test_app_creation_explicitly_unsupported(self):
+        with self.assertRaises(ToolError) as caught:CodexApp().create()
+        self.assertEqual("unsupported",caught.exception.code)
+
+
+if __name__ == "__main__":unittest.main()
