@@ -4,4 +4,4 @@
 
 根目录是协议正文，AI 使用入口为 [AGENT.md](AGENT.md)。[example/](example/README.md) 展示一套完整的 OTA 项目文档，含总体方案、计划、角色配置、具体阶段设计、用例、审核、报告、工具及记录。
 
-本文件用于介绍，AI 按需阅读。项目通过自己的 `AGENT.md` 声明采用范围和实际位置。独立会话调用的 Python API、CLI、原生适配器及验证边界见 [session_handover_tool/](session_handover_tool/README.md)，由项目显式配置和调用。
+本文件用于介绍，AI 按需阅读。项目通过自己的 `AGENT.md` 声明采用范围和实际位置，会话调用默认复用 [session_handover_tool/](session_handover_tool/README.md)。[工作流接入约定](多AI会话工作流规范.md#tool-integration)规定如何派发和接续，原生参数及已有支持范围沿工具说明与验证记录读取。

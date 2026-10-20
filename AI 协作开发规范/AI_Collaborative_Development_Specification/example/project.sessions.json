@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "project_id": "ota-teaching-example",
+  "project_root": "${SESSION_TOOL_PROJECT_ROOT}",
+  "runtime_dir": "C:/bobo_worktool/session-handover-tool/runtime",
+  "documents_root": "${SESSION_TOOL_DOCUMENTS_ROOT}",
+  "profiles": {
+    "cli-default": {
+      "adapter": "codex_cli",
+      "cwd": ".",
+      "native": {
+        "inherit_model": true
+      },
+      "connection": {
+        "executable": "codex"
+      }
+    },
+    "app-review": {
+      "adapter": "codex_app",
+      "cwd": ".",
+      "native": {
+        "inherit_model": true
+      },
+      "connection": {
+        "node": "node",
+        "server_script": "REPLACE_WITH_INSTALLED_APP_TOOLS_SERVER_PATH",
+        "pipe_path_env": "CODEX_APP_TOOLS_PIPE_PATH",
+        "host_id": "local"
+      }
+    },
+    "anti-worker": {
+      "adapter": "antigravity",
+      "cwd": ".",
+      "native": {
+        "model": "CATALOG_MODEL_ID",
+        "model_label": "Exact native catalog label",
+        "native_model": "NATIVE_MODEL_ENUM"
+      },
+      "connection": {
+        "powershell": "pwsh",
+        "python": "python",
+        "log": "REPLACE_WITH_MATCHING_LANGUAGE_SERVER_LOG",
+        "project_id": "REPLACE_WITH_NATIVE_PROJECT_ID"
+      }
+    },
+    "dsh-validator": {
+      "adapter": "deepseek_harness",
+      "cwd": ".",
+      "native": {
+        "provider": "native-provider",
+        "model": "native-model",
+        "reasoning_effort": "native-effort"
+      },
+      "connection": {
+        "node": "node",
+        "time_zone": "UTC"
+      }
+    }
+  },
+  "roles": {
+    "A": "cli-default",
+    "B": "cli-default",
+    "C": "app-review",
+    "D": "anti-worker",
+    "E": "dsh-validator"
+  },
+  "milestones": {},
+  "sessions": {},
+  "authorization": {
+    "reference": "",
+    "allow": [],
+    "actors": []
+  }
+}

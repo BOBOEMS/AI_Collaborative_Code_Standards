@@ -12,15 +12,18 @@
 | 里程碑计划 | [PLAN.md](PLAN.md) |
 | 当前阶段、组编号、责任角色、对象及下一步 | [STATE.md](STATE.md)；当前 DESIGN/CASES/REVIEW/TEST_REPORT 沿该状态和计划定位 |
 | 项目角色、协作、交接与 Git 规则 | [ROLES.md](ROLES.md) |
-| 模型目标、实际会话分组、参数核验和替换依据 | [SESSIONS.md](SESSIONS.md)及其指向的唯一配置 |
+| 模型目标、实际会话分组、参数核验和替换依据 | [SESSIONS.md](SESSIONS.md)为阅读入口，唯一结构化来源为 [project.sessions.json](project.sessions.json) |
 | 共用技术设计 | [shared_design.md](shared_design.md)，需要分册时更新到实际共用设计入口 |
 | 重要决定和按需事件 | [records/INDEX.md](records/INDEX.md)；普通交付由当前成果、提交及共享消息定位 |
 | 内部工具 | [tools/INDEX.md](tools/INDEX.md) |
+| 会话调用 | [统一工具说明](../session_handover_tool/README.md)、[已有验证记录](../session_handover_tool/VALIDATION.md)；调用方式见 [ROLES.md](ROLES.md#handoff) |
 | Git 配置入口 | `<实际项目仓库及其已确认分支/上游配置>`，实际使用前填写并核对；成果汇合分工与推送责任见 [ROLES.md](ROLES.md#project-git) |
 
 真实工程采用时，在此登记生产源码目录、适用子目录工程与语言细则、权限依据，以及唯一 Git 配置的实际入口。入口保持稳定，当前阶段、候选和任务进度由 STATE 维护；文件、工具与 Git 的详细规则沿 ROLES 及其引用的规范取得。
 
 教学场景中的实施授权仅覆盖 M01，依据见[范围和确认记录](records/decisions/20261019-M01-scope.md#范围和确认依据)；M02～M04 保留为后续规划。M02 开始前尚需取得启动授权，该等待事项由 STATE 说明。实际项目在此登记真实用户授权及允许接续的范围，不从计划存在推断全部实施已获批准。
+
+统一工具配置通过 `SESSION_TOOL_PROJECT_ROOT`、`SESSION_TOOL_DOCUMENTS_ROOT` 指向实际工程和协作文档根目录，运行根目录沿配置使用。本例授权字段为空、真实绑定为空，消息及回报均为教学材料；不据此创建会话或派发实际任务。操作工具时按需读取其 README，项目 README 仍仅作介绍。
 
 ## 2. 新会话与压缩恢复
 
