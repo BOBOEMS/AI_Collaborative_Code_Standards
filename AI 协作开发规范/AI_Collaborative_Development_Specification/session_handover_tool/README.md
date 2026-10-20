@@ -14,6 +14,7 @@
 | [adapters/](adapters/) | 分类适配器和 `native/` 桥接，不含项目流程调度 |
 | [tests/](tests/) | stdlib unittest、隔离项目、本地模拟原生端点；固定样例在 `fixtures/` |
 | [VALIDATION.md](VALIDATION.md) | 真实验证结果、支持边界和未验证项 |
+| [ANTIGRAVITY_WORKTEST.md](ANTIGRAVITY_WORKTEST.md) | Antigravity 实际读文件、改代码、运行测试与报告返修的独立核验 |
 
 需要 Python 3.10+，核心无需第三方 Python 包。Antigravity 另需 PowerShell 7；DeepSeek Harness/App Tools 另需 Node.js 和对应已认证的桌面服务。运行数据及测试临时目录默认放在 `C:/bobo_worktool/session-handover-tool/`，不写入协议目录。不需要把整套协议复制到业务项目。
 

@@ -4,6 +4,8 @@
 
 同日按用户要求补充 Antigravity 2.24.0、DeepSeek Harness 0.2.0-rc.2 的真实宿主验证。原生服务恢复后，两者均完成独立会话的创建、绑定、模型核验、两轮实际输出、重复请求拒绝及最终空闲状态核验；适配器代码无需修改。
 
+随后单独完成 [Antigravity 真实开发执行验证](ANTIGRAVITY_WORKTEST.md)：实际读取、修复隔离代码并运行测试，外层独立复测 11 项通过；报告经两轮同会话补正后核验，最终停止。该项高于文本连通性证据，但仍是单个隔离任务的覆盖。
+
 本轮完成通用接口内化与本地验证，未将 Reuse_RTU 现有流程迁移到新模块，未建立真实项目 ABCDE 组，未操作板卡。各类证据分开记录，不能据此宣布所有 Agent 或项目工作流已端到端通过。
 
 ## 自动验证
@@ -29,7 +31,7 @@ Python AST、样例 JSON、Node 脚本语法、PowerShell AST 语法检查通过
 |---|---|---|
 | Codex CLI | **创建、检查、精确续接通过** | 独立 workspace；只读 sandbox、禁止工具的最小文本任务；两次退出码 0、`turn_completed=true`；原生 ID/cwd 一致，分别返回 `SESSION_TOOL_CREATE_OK`、`SESSION_TOOL_RESUME_OK`。继承宿主模型，实际观测到 gpt-6.1-sol / xhigh；未验证任意其他模型或上下文阈值 |
 | Codex App | **绑定、检查、发送、实际输出通过** | 复用同一个专用验证会话；App Tools 原生 read_thread 验证 ID/cwd；依据 CLI 已结束证据确认未加载会话停止后发送；原生会话实际返回 `SESSION_TOOL_APP_OK` 并变为空闲。未提供或验证 App 新建/强制停止能力 |
-| Antigravity | **创建、绑定、检查、两轮实际输出通过** | 专用原生项目及 workspace，Gemini 3.8 Flash（High）实时目录匹配 `MODEL_PLACEHOLDER_M318`；两轮生成器均记录同一原生模型、`error=false`，实际回复均为 `SESSION_TOOL_ANTI_OK`；同一会话 ID/cwd，最终空闲、4 步全部 DONE；重复 task/request 被拒绝 |
+| Antigravity | **原生文本调用及隔离开发执行通过** | Gemini 3.8 Flash（High）映射和实际生成器均为 `MODEL_PLACEHOLDER_M318`；此前两轮文本及重复拒绝通过。新增开发会话实际读文件、改代码、运行失败基线及修复后测试，外层独立复测 11 项通过；两轮报告补正后最终空闲、46 步 DONE，详见[开发实测](ANTIGRAVITY_WORKTEST.md) |
 | DeepSeek Harness | **创建、绑定、模型选择、检查、两轮实际输出通过** | 专用 workspace，`cmdc / deepseek/deepseek-v4.1-flash / max`；`lastUsed` 确认实际使用设置，两轮回复均为 `SESSION_TOOL_DSH_OK`；同一会话 ID/cwd，最终 `running=false`；重复 task/request 被拒绝 |
 
 App Tools 初次调用发现须传递调用方 `_meta.threadId/callId`，已按本机安装桥接代码修正；后续原生检查和发送通过。App 状态读取使用 `thread.status.type`，未将字段缺失或未加载解释为空闲。
@@ -85,5 +87,7 @@ App Tools 初次调用发现须传递调用方 `_meta.threadId/callId`，已按�
 ## 尚未覆盖
 
 任意其他模型和上下文配置的可用性；跨 Agent 的真实多接收者回报、配额耗尽后替换、真实部分失败恢复和整套项目交付/审核/接续。这些流程目前只有相应核心契约或模拟端点证据，不能从上述两轮文本调用推导通过。宿主升级后应重新核验私有接口。
+
+Antigravity 的单个隔离开发任务也不能扩展为上述流程或复杂开发能力已经通过；其首次报告的准确性问题和补正过程保留在专项记录。
 
 这些限制不影响已通过的通用契约及四个通道的专用会话验证；项目采用时仍应按具体模型、权限与任务补齐项目验证，再据完成条件判断结果。
