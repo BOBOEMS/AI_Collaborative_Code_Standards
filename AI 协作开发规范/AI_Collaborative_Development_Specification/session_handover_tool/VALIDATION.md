@@ -2,6 +2,8 @@
 
 日期：2026-10-20。对象：本目录 `1.0.0`，Windows、本机 Python 3.12、Node.js、PowerShell 7；原生 Codex CLI 0.162.0，App Tools MCP 0.1.6。
 
+同日按用户要求补充 Antigravity 2.24.0、DeepSeek Harness 0.2.0-rc.2 的真实宿主验证。原生服务恢复后，两者均完成独立会话的创建、绑定、模型核验、两轮实际输出、重复请求拒绝及最终空闲状态核验；适配器代码无需修改。
+
 本轮完成通用接口内化与本地验证，未将 Reuse_RTU 现有流程迁移到新模块，未建立真实项目 ABCDE 组，未操作板卡。各类证据分开记录，不能据此宣布所有 Agent 或项目工作流已端到端通过。
 
 ## 自动验证
@@ -27,10 +29,22 @@ Python AST、样例 JSON、Node 脚本语法、PowerShell AST 语法检查通过
 |---|---|---|
 | Codex CLI | **创建、检查、精确续接通过** | 独立 workspace；只读 sandbox、禁止工具的最小文本任务；两次退出码 0、`turn_completed=true`；原生 ID/cwd 一致，分别返回 `SESSION_TOOL_CREATE_OK`、`SESSION_TOOL_RESUME_OK`。继承宿主模型，实际观测到 gpt-6.1-sol / xhigh；未验证任意其他模型或上下文阈值 |
 | Codex App | **绑定、检查、发送、实际输出通过** | 复用同一个专用验证会话；App Tools 原生 read_thread 验证 ID/cwd；依据 CLI 已结束证据确认未加载会话停止后发送；原生会话实际返回 `SESSION_TOOL_APP_OK` 并变为空闲。未提供或验证 App 新建/强制停止能力 |
-| Antigravity | **真实服务验证未完成** | 本机未发现唯一的运行中语言服务，返回 `backend_unavailable`；未向旧会话发送、未创建替代会话。RPC 字段、目录映射、身份/cwd 和发送方式仅通过本地模拟端点验证 |
-| DeepSeek Harness | **真实服务验证未完成** | 已配置的本机桌面 API 返回 `ECONNREFUSED`；未创建真实会话或发送任务。创建、选择、检查、中文派发、忙拒绝和部分创建恢复仅通过本地模拟端点验证 |
+| Antigravity | **创建、绑定、检查、两轮实际输出通过** | 专用原生项目及 workspace，Gemini 3.8 Flash（High）实时目录匹配 `MODEL_PLACEHOLDER_M318`；两轮生成器均记录同一原生模型、`error=false`，实际回复均为 `SESSION_TOOL_ANTI_OK`；同一会话 ID/cwd，最终空闲、4 步全部 DONE；重复 task/request 被拒绝 |
+| DeepSeek Harness | **创建、绑定、模型选择、检查、两轮实际输出通过** | 专用 workspace，`cmdc / deepseek/deepseek-v4.1-flash / max`；`lastUsed` 确认实际使用设置，两轮回复均为 `SESSION_TOOL_DSH_OK`；同一会话 ID/cwd，最终 `running=false`；重复 task/request 被拒绝 |
 
 App Tools 初次调用发现须传递调用方 `_meta.threadId/callId`，已按本机安装桥接代码修正；后续原生检查和发送通过。App 状态读取使用 `thread.status.type`，未将字段缺失或未加载解释为空闲。
+
+### Antigravity / Harness 补测范围
+
+初次验证时两个服务未运行的证据保留在原 `native-host-preflight.json`；上表为恢复服务后的补测结果，不覆盖原失败记录。
+
+1. 在工具运行目录建立独立 workspace。Antigravity 会话注册表初始为空，但 `ListProjects` 可读取原生项目；使用本机已安装前端所用的 `ReadProject/CreateProject` 契约建立独立测试项目、核验其 folder URI，未借用或修改 Reuse_RTU 原生项目。此准备未扩展为模块的自动项目创建能力。
+2. 使用本模块 `SessionClient.create/inspect/send/bind` 驱动两个专用会话，原生 ID、cwd 和标题均核验。首轮为中文禁止工具的最小文本任务；第二轮含非 BMP 字符，要求复述上一轮标识，消息本身不再给出预期标识，验证同一原生会话的上下文连续性。
+3. Antigravity 从 `GetCascadeTrajectory` 读取实际 planner response、步骤完成状态和生成器模型；后端返回的响应模型别名为 `gemini-3.8-flash-n`，High 选择的证据是实时目录映射与生成器枚举均为 `MODEL_PLACEHOLDER_M318`。不把后端别名自行解释成其他模型变体。
+4. Harness 从自身桌面 API 的 `session/page` 读取实际 assistant message，`session/projections.modelSelection.lastUsed` 确认 provider/model/effort，未仅凭 `next` 或发送 accepted 判定推理通过。输出读取参考已有只读 host client；创建、选择和派发由本模块执行。
+5. 两轮完成后，通过本模块显式绑定同一原生 ID；重复任务及重复创建 request ID 均得到确定的 `already_attempted`，没有发起第三轮测试或再建会话。两个原生会话最终均为空闲。
+
+本次没有测试模型切换、额度耗尽、真实多接收者回报或项目工作流续派；通过范围限于表列的模型及文本调用链。
 
 ## 原始证据位置
 
@@ -49,10 +63,27 @@ App Tools 初次调用发现须传递调用方 `_meta.threadId/callId`，已按�
 | `native-host-preflight.json` | Antigravity/Harness 当前服务不可用的原始错误分类 |
 | `runtime/` | 请求回执、固定任务快照、CLI 原生 JSONL、worker PID/退出记录 |
 
+补测材料在同一根目录的 `agents-live/`，真实 ID 和连接配置仅保存在这里：
+
+| 文件/目录 | 内容 |
+|---|---|
+| `project.sessions.json` / `workspace/` | 专用验证配置与工作目录，独立于原项目配置 |
+| `antigravity-preflight.json` / `antigravity-project.json` | 实时目录、原生项目查询及专用项目创建回执 |
+| `anti-create.json` / `dsh-create.json` | 通过本模块创建并核验登记的回执 |
+| `anti-send.json`、`anti-send2.json` / `dsh-send.json`、`dsh-send2.json` | 两个通道各两轮明确派发的原始回执 |
+| `anti-trajectory-first.json` / `anti-trajectory-second.json` | 专用会话的原生轨迹、实际回复、完成状态及模型元数据 |
+| `anti-observation-first.json` / `anti-observation-second.json` | 原生身份、目录、空闲状态与生成器观测 |
+| `dsh-completion.json` / `dsh-completion-second.json` | 专用会话的实际 assistant message 及模型 lastUsed |
+| `anti-bind.json` / `dsh-bind.json`、`anti-inspect.json` / `dsh-inspect.json` | 显式同 ID 绑定与最终原生状态 |
+| `verified-results.json` | 两轮输出、模型、最终状态和重复拒绝断言的汇总 |
+| `runtime/` | 本轮请求回执及固定任务快照 |
+
+`run.py`、`probe.py`、`anti_result.py`、`check_results.py` 是本轮验证入口，不是通用模块依赖；重复执行修改动作须遵守已保存的 request/task 回执。`installed-source/` 只用于核对本机安装版本及原生接口，不纳入协议仓库。
+
 旧项目配置仅在人工验证脚本中用于定位本机已安装服务的文件位置；未使用旧任务绑定和接收方，不构成新模块的运行依赖。真实 ID、pipe 及本机凭据不纳入本记录。
 
 ## 尚未覆盖
 
-Antigravity/Harness 真实服务恢复后的目录、认证、配额、实际推理及模型一致性；任意模型和上下文配置的可用性；跨 Agent 的真实多接收者回报、配额耗尽后替换和整套项目交付/审核/接续。后面三类目前只有核心契约与模拟端点证据。宿主升级后应重新核验私有接口。
+任意其他模型和上下文配置的可用性；跨 Agent 的真实多接收者回报、配额耗尽后替换、真实部分失败恢复和整套项目交付/审核/接续。这些流程目前只有相应核心契约或模拟端点证据，不能从上述两轮文本调用推导通过。宿主升级后应重新核验私有接口。
 
-这些限制不影响已通过的通用契约及 Codex 专用会话验证；项目采用时应按所选适配器补齐实际宿主验证，再据项目完成条件判断结果。
+这些限制不影响已通过的通用契约及四个通道的专用会话验证；项目采用时仍应按具体模型、权限与任务补齐项目验证，再据完成条件判断结果。
