@@ -6,7 +6,7 @@
 
 [设计](../../milestones/M01/DESIGN.md)、[用例](../../milestones/M01/CASES.md)、[C 当前审核](../../milestones/M01/REVIEW.md)、[E 报告](../../milestones/M01/TEST_REPORT.md)相互一致。R1 T05 失败保留，R2 针对修正和复测已覆盖当前影响，M01 无待执行任务。
 
-场景内 D/E 停止设备、源码及供包操作，C/B 交付结束；M01 的 A 停派，五角色绑定保留原组归属。M02 尚未建立真实或教学运行会话组，不续接本组。
+场景内 D/E 停止设备、源码及供包操作，C/B 交付结束；M01 的 A 停派，五角色绑定保留原组归属，登记入口见 [SESSIONS.md](../../SESSIONS.md#milestone-m01)。M02 尚未建立真实或教学运行会话组，不续接本组。
 
 ## 提交与远程同步字段
 

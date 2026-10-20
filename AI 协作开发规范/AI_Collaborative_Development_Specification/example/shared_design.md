@@ -1,6 +1,6 @@
 # 共用设计：镜像区域与安装保护
 
-规定位置：`AI/shared_design.md`。由当前 B 维护，M01 安装恢复、M02 配套包、M03 远程安装共同引用。仅当前 M01 使用的内部流程在 [DESIGN.md](milestones/M01/DESIGN.md)维护。术语见 [PROJECT.md](PROJECT.md#术语与阅读说明)。
+规定位置：`AI/shared_design.md`。由当前 B 维护，M01 安装恢复、M02 配套包、M03 远程安装共同引用。仅当前 M01 使用的内部流程在 [DESIGN.md](milestones/M01/DESIGN.md)维护。文件维护、工具分工及 Git 协作沿 [ROLES.md](ROLES.md)及所引规范读取，模型和会话登记见 [SESSIONS.md](SESSIONS.md)；本文件只保存共用技术约定。术语见 [PROJECT.md](PROJECT.md#术语与阅读说明)。
 
 ## 1. 采用依据和边界
 

@@ -1,8 +1,8 @@
 # Reuse_RTU OTA 里程碑划分示例
 
-更新日期：2026-10-19。规定位置：项目 `AI/PLAN.md`。采用规范：[里程碑的划分规范](../里程碑设计规范.md)。输入：[Reuse_RTU OTA 总体方案示例](PROJECT.md)。
+更新日期：2026-10-20。规定位置：项目 `AI/PLAN.md`。采用规范：[里程碑设计规范](../里程碑设计规范.md)。输入：[Reuse_RTU OTA 总体方案示例](PROJECT.md)。
 
-本文件依据总体方案示例重新组织教学计划，展示能力划分、依赖及上板安排。M01～M04 是本套教学编号，与源项目阶段不作对应。各条目说明计划要求，教学快照为 M01 已结束、M02 尚未启动，结果见 [STATE.md](STATE.md)；演示不产生真实项目实施或设备操作授权。
+本文件依据总体方案示例重新组织教学计划，展示能力划分、依赖及上板安排。M01～M04 是本套教学编号，与源项目阶段不作对应。各条目说明计划要求，当前阶段和结果统一见 [STATE.md](STATE.md)；演示不产生真实项目实施或设备操作授权。
 
 ## 术语与阅读说明
 
@@ -73,7 +73,7 @@ F-01 在本阶段验证启动与确认；完整采集、阀门、上报和补报
 
 ### 设计与执行入口
 
-本阶段完整实例：[具体设计](milestones/M01/DESIGN.md)、[正式用例](milestones/M01/CASES.md)、[当前审核](milestones/M01/REVIEW.md)、[验证报告](milestones/M01/TEST_REPORT.md)。共用约定见 [shared_design.md](shared_design.md)，角色及教学会话登记见 [ROLES.md](ROLES.md)。当前 M01 已按演示结果收口；其后的远程同步回执见[收口记录](records/M01/20261019-A-closeout.md)。
+本阶段完整实例：[具体设计](milestones/M01/DESIGN.md)、[正式用例](milestones/M01/CASES.md)、[当前审核](milestones/M01/REVIEW.md)、[验证报告](milestones/M01/TEST_REPORT.md)。共用约定见 [shared_design.md](shared_design.md)，协作约定见 [ROLES.md](ROLES.md)，教学会话登记见 [SESSIONS.md](SESSIONS.md#milestone-m01)。当前阶段进展由 [STATE.md](STATE.md)定位，演示远程同步回执见[收口记录](records/M01/20261019-A-closeout.md)。
 
 ## 4. M02：版本清单与配套服务包
 

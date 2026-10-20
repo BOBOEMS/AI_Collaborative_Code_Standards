@@ -1,12 +1,13 @@
 # 当前状态：教学快照
 
-本文件模拟 `AI/STATE.md`，由 A 覆盖维护。所有结果和回执均为演示，不是源项目状态。术语与候选说明见 [PROJECT.md](PROJECT.md#术语与阅读说明)及 [README.md](README.md)。
+本文件模拟 `AI/STATE.md`，由 A 覆盖维护。所有结果和回执均为演示，不是源项目状态。模型、原生 ID 和历次会话表由 SESSIONS 的唯一来源维护，本文件只保留当前组及任务进展。术语与候选说明见 [PROJECT.md](PROJECT.md#术语与阅读说明)及 [README.md](README.md)。
 
 | 项目 | 当前有效内容 |
 |---|---|
 | 当前目标 | V1 完成功能链路、必要保护、审查和实物代表验证；全版本尚未验收 |
 | 当前阶段 | M01 已按教学条件完成收口；M02 尚未进入 |
-| 当前组 | M01 的 ABCDE 在场景中已结束并停止资源操作；实际没有创建会话，登记见 [ROLES.md](ROLES.md) |
+| 当前组编号及入口 | M01，实际绑定和各会话运行状态沿 [SESSIONS.md 的 M01 组](SESSIONS.md#milestone-m01)取得 |
+| 当前责任角色 | A 对外说明收口与交接；当前无运行中任务，是否进入下一阶段待用户决定 |
 | 当前方案 | [M01 设计](milestones/M01/DESIGN.md)、[共用约定](shared_design.md)、[范围确认](records/decisions/20261019-M01-scope.md) |
 | 当前候选 | DEMO-M01-R2；仅教学标识，不是实际固件或 Git 提交 |
 | 实现及审核 | 无备份维修准入错误已在场景中修正；C 对实现、用例、验证证据分别通过，见 [REVIEW.md](milestones/M01/REVIEW.md) |
