@@ -37,7 +37,7 @@
       "adapter": "deepseek_harness",
       "cwd": ".",
       "native": {"provider": "native-provider", "model": "native-model", "reasoning_effort": "native-effort"},
-      "connection": {"node": "node", "authority": "127.0.0.1:4891", "credentials_env": "DSH_CREDENTIAL_FILE", "time_zone": "UTC"}
+      "connection": {"node": "node", "time_zone": "UTC"}
     }
   },
   "roles": {"A": "cli-default", "B": "cli-default", "C": "app-default", "D": "dsh-selected", "E": "anti-selected"},

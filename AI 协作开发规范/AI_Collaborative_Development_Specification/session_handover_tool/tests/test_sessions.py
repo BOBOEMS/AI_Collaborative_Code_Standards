@@ -322,5 +322,40 @@ class Sessions(unittest.TestCase):
         self.assertEqual(0, process.returncode, process.stdout + process.stderr)
         self.assertTrue(json.loads(process.stdout)["valid"])
 
+    def test_query_methods_do_not_fall_back_to_another_adapter(self):
+        ref=self.create()
+        self.assertCode("unsupported",lambda:self.client.probe("default"))
+        self.assertCode("unsupported",lambda:self.client.read(session=ref))
+        self.assertCode("unsupported",lambda:self.client.wait(session=ref,timeout_seconds=0))
+        self.assertEqual(1,len(self.agent.calls))
+
+    def test_wait_uses_frozen_dispatch_target_after_role_switch(self):
+        old=self.create()
+        send=self.agent.send
+        def native_send(target,message,runtime,*,request_id):
+            return {**send(target,message,runtime,request_id=request_id),"dispatch_id":request_id,"baseline_seq":4,"expected_turn":1}
+        self.agent.send=native_send
+        self.agent.wait=lambda target,runtime,**kwargs:{"waited_native_id":target["native_id"],"dispatch_id":kwargs["dispatch"]["dispatch_id"]}
+        self.client.send("old task",task_id="T01",milestone="M01",role="D",request_id="frozen-wait")
+        self.client.switch(milestone="M01",role="D",profile="replacement")
+        result=self.client.wait(request_id="frozen-wait",timeout_seconds=0)
+        self.assertEqual(old["native_id"],result["waited_native_id"])
+        self.assertCode("wrong_target",lambda:self.client.wait(request_id="frozen-wait",milestone="M01",role="D"))
+
+    def test_wait_cannot_turn_unknown_dispatch_into_a_confirmed_task(self):
+        ref=self.create()
+        self.agent.failures[ref["native_id"]]=ToolError("timeout","lost reply",uncertain=True)
+        self.assertCode("timeout",lambda:self.client.send("x",session=ref,task_id="T01",request_id="unknown-query"))
+        self.assertCode("invalid_request",lambda:self.client.wait(request_id="unknown-query"))
+        self.assertEqual(1,len([x for x in self.agent.calls if x[0]=="send"]))
+
+    def test_native_history_query_remains_readonly(self):
+        ref=self.create()
+        self.agent.read=lambda target,runtime,**kwargs:{"assistant":"native output","limit":kwargs["limit"]}
+        self.agent.probe=lambda target,runtime:{"connected":True}
+        self.edit(lambda data:data["authorization"].update(reference="",allow=[]))
+        self.assertTrue(self.client.probe("default")["connected"])
+        self.assertEqual("native output",self.client.read(session=ref,limit=11)["assistant"])
+
 
 if __name__ == "__main__":unittest.main()

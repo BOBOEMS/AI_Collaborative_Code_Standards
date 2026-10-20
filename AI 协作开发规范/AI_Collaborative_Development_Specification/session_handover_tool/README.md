@@ -1,6 +1,6 @@
 # 独立会话调用工具
 
-此模块提供 Python API 和 CLI，按项目配置调用各 Agent 的原生会话。支持直接会话调用，以及“里程碑＋A/B/C/D/E”调用；负责身份核验、登记、显式派发、替换绑定和回报送达。流程安排、用户审批、Git 交付检查、审核结论及里程碑推进由调用者按[工作流规范](../多AI会话工作流规范.md)处理。
+此模块提供 Python API 和 CLI，按项目配置调用各 Agent 的原生会话。当前版本 `1.1.0`。支持直接会话调用，以及“里程碑＋A/B/C/D/E”调用；负责身份核验、登记、显式派发、替换绑定和回报送达。流程安排、用户审批、Git 交付检查、审核结论及里程碑推进由调用者按[工作流规范](../多AI会话工作流规范.md)处理。
 
 从 Reuse_RTU 的 `6.Tools/agents/` 提取已有原生调用方式，移除板卡、H 阶段、固定 C/D、固定模型和本机绑定。原项目工具及现行绑定未迁移、未修改。本模块运行时不读取旧项目配置。
 
@@ -15,8 +15,9 @@
 | [tests/](tests/) | stdlib unittest、隔离项目、本地模拟原生端点；固定样例在 `fixtures/` |
 | [VALIDATION.md](VALIDATION.md) | 真实验证结果、支持边界和未验证项 |
 | [ANTIGRAVITY_WORKTEST.md](ANTIGRAVITY_WORKTEST.md) | Antigravity 实际读文件、改代码、运行测试与报告返修的独立核验 |
+| [DEEPSEEK_ROUTE_A.md](DEEPSEEK_ROUTE_A.md) | Harness 路线 A 的自动发现、原生结果读取、有限等待和真实开发验证 |
 
-需要 Python 3.10+，核心无需第三方 Python 包。Antigravity 另需 PowerShell 7；DeepSeek Harness/App Tools 另需 Node.js 和对应已认证的桌面服务。运行数据及测试临时目录默认放在 `C:/bobo_worktool/session-handover-tool/`，不写入协议目录。不需要把整套协议复制到业务项目。
+需要 Python 3.10+，核心无需第三方 Python 包。Antigravity 另需 PowerShell 7；DeepSeek Harness 另需 Node.js 18+，原生客户端仅用内置库；App Tools 需要其安装版本支持的 Node.js。两个桌面通道均需对应已认证的服务。运行数据及测试临时目录默认放在 `C:/bobo_worktool/session-handover-tool/`，不写入协议目录。不需要把整套协议复制到业务项目。
 
 ## 原生能力与边界
 
@@ -25,7 +26,7 @@
 | `codex_cli` | 初始消息启动首轮推理，返回真实 ID | 原生会话文件核验 ID/cwd；自有 worker 保存退出证据 | 精确 `exec resume ID`，消息走 stdin；原生模型、强度及可选上下文/压缩配置 |
 | `codex_app` | 本版不提供，宿主创建后绑定 | 原生 `read_thread`，可用时补充本地模型观测 | 通过本机 App Tools 的 `send_message_to_thread`；不新启第二个推理 CLI |
 | `antigravity` | `StartCascade` 创建空闲会话 | 原生项目、workspace、状态、模型目录和生成器元数据 | `SendUserCascadeMessage`；精确选择原生目录变体，High/Thinking 不转换成通用 effort |
-| `deepseek_harness` | 桌面 API 建 workspace/session | 原生 ID、cwd、运行状态、modelSelection | `selectModel` 后 `session/prompt`；保留原生 provider/model/reasoningEffort |
+| `deepseek_harness` | GUI 路线 A，以 workspaceId 建 session | 自动发现并认证本机宿主；原生 ID、cwd、运行状态、modelSelection | `selectModel` 后 `session/prompt`；保留原生 provider/model/reasoningEffort；支持原生历史读取及按派发回执有限等待 |
 | `command_code`、`grok` | — | — | 明确未接入，不退回其他 Agent |
 
 Antigravity/Harness 创建不发送任务；传创建消息会拒绝，随后显式 `send`。Codex CLI 必须有初始消息，建议仅用于读入口和确认待命；正式任务再以 `task_id` 派发。CLI 的 `title` 不调用原生重命名接口。
@@ -60,7 +61,7 @@ Antigravity/Harness 创建不发送任务；传创建消息会拒绝，随后显
 
 - Codex：`model` 或 `inherit_model: true` 二选一；可选 `reasoning_effort`。CLI 另支持正整数 `context_window`、`auto_compact_limit`。实际模型/强度按原生日志观测，上下文及压缩阈值仅是请求配置，不保证宿主支持任意值。CLI 的 `execution` 可显式设 `sandbox`、`approval_policy`、`skip_git_repo_check`，默认继承本机，无内置绕过开关。
 - Antigravity：`model/model_label/native_model` 来自当前原生目录。connection 填 `log/project_id`，可选 `powershell/python/process_id`；多个语言服务须指定唯一 PID。CSRF 只进子进程环境，不写配置和回执。
-- Harness：`provider/model/reasoning_effort` 用原生值。connection 填 `authority`（仅 loopback）、`node`、`credentials` 文件路径或 `credentials_env` 环境变量名；可选 `time_zone`，默认 UTC。不复制凭据内容。
+- Harness：`provider/model/reasoning_effort` 用原生值。connection 的 `authority` 可省略，自动发现并认证运行中的 GUI；显式 `authority` 优先，其次 `authority_env` 指定的环境变量（默认 `DSH_AUTHORITY`）。只接受 `127.0.0.1:port`，多宿主须显式选择。浏览器会话凭据默认从 `dsh_home`、`DSH_HOME` 或 `~/.dsh` 下的 `.credentials.yaml` 定位，可用 `credentials` 或 `credentials_env` 指定文件位置。可选 `node/time_zone`，时区默认 UTC。推理由 GUI 使用自己的凭据，不要求调用者设置模型 API Key；详见[路线 A 指南](DEEPSEEK_ROUTE_A.md)。
 - App：connection 填 `node/server_script` 和可选 `host_id`。当前端点由 `pipe_path_env`（默认 `CODEX_APP_TOOLS_PIPE_PATH`）或显式 `pipe_path` 提供。调用方上下文由 `caller_thread_id_env`（默认 `CODEX_THREAD_ID`）或 `caller_thread_id` 提供，不拿接收方 ID 冒充调用方。`server_script` 指向已安装的 App Tools MCP 入口。
 
 ## CLI 使用
@@ -119,7 +120,7 @@ client.report(milestone="M01", task_id="T01", sender="codex_cli:" + created["nat
               record="C:/projects/sample/AI/records/T01.md", commit="COMMIT_HASH")
 ```
 
-公共方法为 `capabilities/validate/create/bind/inspect/send/switch/report/receipt/sync`，签名以 [api.py](api.py) 为准。捕获 `ToolError`，用 `code/uncertain/details.request_id` 判断下一步，不根据文本猜测重试。
+公共方法为 `capabilities/validate/create/bind/inspect/send/switch/report/receipt/sync`，以及当前仅 Harness 提供的 `probe/read/wait`；其他适配器调用这三项会明确返回 `unsupported`。签名以 [api.py](api.py) 为准。捕获 `ToolError`，用 `code/uncertain/details.request_id` 判断下一步，不根据文本猜测重试。
 
 ## 回执与失败处理
 
@@ -129,7 +130,7 @@ client.report(milestone="M01", task_id="T01", sender="codex_cli:" + created["nat
 4. 每个接收者分别保存回执。成功、尝试中、未知者不会重发；仅确定失败者可用相同 delivery ID 重试。相同 delivery ID 的内容改变会拒绝。
 5. 请求 ID 已存在时查原回执，不能直接换 ID 再试。`unknown` 不代表未执行；检查原生会话、worker 和已有进程后处理。角色创建未知且有 ID 时，可 `bind --recover-request 原请求ID`，须同一目标与 ID。没有 ID 的未知创建、未知 switch 由维护者核对宿主与配置处理，本版不自动补建、无强制清除命令。
 
-`accepted` 依通道标明：CLI 为本地 worker 启动，App/Antigravity/Harness 为宿主返回成功。CLI 后续 `inspect.execution` 的退出码和 `turn_completed` 才说明执行结果；其他通道继续取原生结果或由执行者正式交付。发送被接受、实际执行、正式交付、审核通过分别记录。
+`accepted` 依通道标明：CLI 为本地 worker 启动，App/Antigravity/Harness 为宿主返回成功。CLI 后续 `inspect.execution` 的退出码和 `turn_completed` 才说明执行结果。Harness 用 `wait --request-id` 核对本次派发之后的原生 `turn/end`、结束原因和空闲状态；单次等待 0～45 秒，超时返回 `timed_out=true`，命令退出码 0 只代表查询成功，须继续等待原请求，不能重发任务。不带请求 ID 的等待只观测空闲。其他通道继续取原生结果或由执行者正式交付。发送被接受、实际执行、正式交付、审核通过分别记录。
 
 CLI 状态主要覆盖本模块启动的 worker。其他客户端操作同一原生会话前须完成资源交接；项目锁只覆盖本模块的登记和发送确认，不锁定所有外部客户端。任务快照是工具约定不覆盖的记录，不是防篡改审计系统。
 

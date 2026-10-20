@@ -25,6 +25,7 @@ def parser():
     commands = p.add_subparsers(dest="command", required=True)
     commands.add_parser("capabilities")
     commands.add_parser("validate")
+    q = commands.add_parser("probe"); q.add_argument("--profile", required=True)
     init = commands.add_parser("init", help="Create a readonly project config; never overwrite")
     init.add_argument("--project-id", required=True)
     init.add_argument("--project-root", required=True)
@@ -46,6 +47,12 @@ def parser():
         if name == "bind":q.add_argument("--recover-request")
         if name == "switch":q.add_argument("--confirmed-stopped", action="store_true")
     select(commands.add_parser("inspect"))
+    q = commands.add_parser("read"); select(q)
+    q.add_argument("--limit", type=int, default=200)
+    q.add_argument("--events", action="store_true", help="Include native work events, excluding request headers/system messages")
+    q = commands.add_parser("wait"); select(q)
+    q.add_argument("--request-id", help="Accepted dispatch to wait for; omit only to observe idle state")
+    q.add_argument("--timeout", type=float, default=30, help="Bounded wait seconds, 0..45; timeout does not resend")
     q = commands.add_parser("send")
     select(q)
     q.add_argument("--task-id", required=True)
@@ -92,6 +99,11 @@ def run(args):
         return {"status": "initialized_readonly", "config": str(path)}
     client = SessionClient(path, actor=args.actor)
     if args.command == "validate":return client.validate()
+    if args.command == "probe":return client.probe(args.profile)
+    if args.command == "read":return client.read(session=args.session, milestone=args.milestone, role=args.role,
+                                                limit=args.limit, include_events=args.events)
+    if args.command == "wait":return client.wait(session=args.session, milestone=args.milestone, role=args.role,
+                                                request_id=args.request_id, timeout_seconds=args.timeout)
     if args.command == "receipt":return client.receipt(args.request_id)
     if args.command == "sync":return client.sync(args.output)
     if args.command == "inspect":return client.inspect(session=args.session, milestone=args.milestone, role=args.role)

@@ -92,6 +92,45 @@ class SessionClient:
         result = self._adapter(ref).inspect(ref, self.store.root)
         return {"session": ref, "observed_at": now(), **result}
 
+    def probe(self, profile):
+        data = self._load()
+        target = config.target(data, profile)
+        method = getattr(self._adapter(target), "probe", None)
+        if method is None:
+            raise ToolError("unsupported", "This adapter does not expose native host discovery")
+        return {"profile": profile, **method(target, self.store.root)}
+
+    def read(self, *, session=None, milestone=None, role=None, limit=200, include_events=False):
+        ref = self._resolve(self._load(), session, milestone, role)
+        method = getattr(self._adapter(ref), "read", None)
+        if method is None:
+            raise ToolError("unsupported", "This adapter does not expose native history reading")
+        return {"session": ref, "observed_at": now(),
+                **method(ref, self.store.root, limit=limit, include_events=include_events)}
+
+    def wait(self, *, session=None, milestone=None, role=None, request_id=None, timeout_seconds=30):
+        data = self._load()
+        dispatch = None
+        if request_id:
+            receipt = self.receipt(request_id)
+            if receipt.get("action") != "send" or receipt.get("status") != "accepted" or not receipt.get("session"):
+                raise ToolError("invalid_request", "Wait requires a confirmed dispatch with a frozen session snapshot")
+            ref = self._resolve(data, session=receipt["session"])
+            if session or role:
+                requested = self._resolve(data, session, milestone, role)
+                if not config.same_identity(ref, requested):
+                    raise ToolError("wrong_target", "Wait request belongs to a different native session")
+            dispatch = receipt["acknowledgement"]
+            if dispatch.get("dispatch_id") != request_id or type(dispatch.get("baseline_seq")) is not int:
+                raise ToolError("unsupported", "This dispatch has no native turn/cursor acknowledgement for waiting")
+        else:
+            ref = self._resolve(data, session, milestone, role)
+        method = getattr(self._adapter(ref), "wait", None)
+        if method is None:
+            raise ToolError("unsupported", "This adapter does not expose bounded native waiting")
+        return {"session": ref, "observed_at": now(),
+                **method(ref, self.store.root, timeout_seconds=timeout_seconds, dispatch=dispatch)}
+
     def receipt(self, request_id):
         path = self.store.request_path(request_id)
         if not path.is_file():
@@ -254,7 +293,8 @@ class SessionClient:
                 raise ToolError("already_attempted", "Task ID already has a dispatch snapshot; inspect it instead of resending")
             receivers = [self._resolve(data, milestone=milestone, role=r) if r in config.ROLES
                          else self._resolve(data, session=r) for r in report_to]
-            path, receipt = self._request("send", request_id, milestone=milestone, role=role, authorization=auth)
+            path, receipt = self._request("send", request_id, milestone=milestone, role=role,
+                                          task_id=task_id, session=target, authorization=auth)
             task = {"milestone": milestone, "task_id": task_id, "target": target, "report_to": receivers,
                     "message_sha256": hashlib.sha256(message.encode("utf-8")).hexdigest(),
                     "record": str(record) if record else None, "request_id": receipt["request_id"], "created_at": now()}

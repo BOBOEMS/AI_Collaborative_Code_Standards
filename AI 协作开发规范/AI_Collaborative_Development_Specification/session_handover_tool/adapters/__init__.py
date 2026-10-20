@@ -23,7 +23,10 @@ def capabilities():
         "codex_cli": {"operations": ["create", "bind", "inspect", "send"], "platform": "Windows", "stop_evidence": "owned worker or explicit handover", "create_requires_message": True},
         "codex_app": {"operations": ["bind", "inspect", "send"], "platform": "Windows", "requires": "existing authenticated host and native metadata", "create": False, "stop": False},
         "antigravity": {"operations": ["create", "bind", "inspect", "send"], "platform": "Windows", "requires": "running authenticated language server; exact native catalog variant"},
-        "deepseek_harness": {"operations": ["create", "bind", "inspect", "send"], "platform": "Windows", "requires": "running desktop API and local credential file"},
+        "deepseek_harness": {"operations": ["probe", "create", "bind", "inspect", "send", "read", "wait"],
+                             "platform": "Windows", "transport": "route-a-gui-host", "requires": "running authenticated GUI host",
+                             "discovery": "configured authority, environment, then authenticated loopback discovery",
+                             "wait": "bounded; accepted dispatch requires a fresh native turn/end; idle alone is not task completion"},
         "command_code": {"operations": [], "status": "not_integrated"},
         "grok": {"operations": [], "status": "not_integrated"},
     }

@@ -17,3 +17,16 @@ class DeepSeekHarness:
 
     def send(self, target, message, runtime, *, request_id):
         return self._call(target, "send", runtime, request_id=request_id, prompt=message)
+
+    def probe(self, target, runtime):
+        return self._call(target, "probe", runtime)
+
+    def read(self, target, runtime, *, limit=200, include_events=False):
+        return self._call(target, "read", runtime, options={"limit": limit, "includeEvents": include_events})
+
+    def wait(self, target, runtime, *, timeout_seconds=30, dispatch=None):
+        options = {"timeoutSeconds": timeout_seconds}
+        if dispatch:
+            options.update(baselineSeq=dispatch.get("baseline_seq"), expectedTurn=dispatch.get("expected_turn"),
+                           dispatchId=dispatch.get("dispatch_id"))
+        return self._call(target, "wait", runtime, options=options)

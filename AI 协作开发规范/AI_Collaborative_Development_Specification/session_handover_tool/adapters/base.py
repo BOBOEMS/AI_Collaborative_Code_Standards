@@ -46,7 +46,7 @@ def bridge(command, target, action, *, runtime, request_id="inspect", **kwargs):
     if result.returncode or last.get("ok") is False:
         error = last.get("error", last)
         details = {"native_id": created["session_id"]} if created else {
-            k: v for k, v in error.get("details", {}).items() if k == "native_id"}
+            k: v for k, v in error.get("details", {}).items() if k in ("native_id", "authorities", "native_code", "cursor")}
         raise ToolError(error.get("code", "bridge_unknown"), error.get("message", "Native bridge failed; inspect its host"),
                         uncertain=bool(created) or error.get("uncertain", action in ("create", "send")), details=details)
     if not last:
