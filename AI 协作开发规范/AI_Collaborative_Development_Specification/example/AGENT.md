@@ -14,7 +14,7 @@
 | 项目角色、协作、交接与 Git 规则 | [ROLES.md](ROLES.md) |
 | 模型目标、实际会话分组、参数核验和替换依据 | [SESSIONS.md](SESSIONS.md)及其指向的唯一配置 |
 | 共用技术设计 | [shared_design.md](shared_design.md)，需要分册时更新到实际共用设计入口 |
-| 确认和工作记录 | [records/INDEX.md](records/INDEX.md) |
+| 重要决定和按需事件 | [records/INDEX.md](records/INDEX.md)；普通交付由当前成果、提交及共享消息定位 |
 | 内部工具 | [tools/INDEX.md](tools/INDEX.md) |
 | Git 配置入口 | `<实际项目仓库及其已确认分支/上游配置>`，实际使用前填写并核对；执行分工见 [ROLES.md](ROLES.md#project-git) |
 

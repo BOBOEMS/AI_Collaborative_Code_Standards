@@ -73,7 +73,7 @@ F-01 在本阶段验证启动与确认；完整采集、阀门、上报和补报
 
 ### 设计与执行入口
 
-本阶段完整实例：[具体设计](milestones/M01/DESIGN.md)、[正式用例](milestones/M01/CASES.md)、[当前审核](milestones/M01/REVIEW.md)、[验证报告](milestones/M01/TEST_REPORT.md)。共用约定见 [shared_design.md](shared_design.md)，协作约定见 [ROLES.md](ROLES.md)，教学会话登记见 [SESSIONS.md](SESSIONS.md#milestone-m01)。当前阶段进展由 [STATE.md](STATE.md)定位，演示远程同步回执见[收口记录](records/M01/20261019-A-closeout.md)。
+本阶段完整实例：[具体设计](milestones/M01/DESIGN.md)、[正式用例](milestones/M01/CASES.md)、[当前审核](milestones/M01/REVIEW.md)、[验证报告](milestones/M01/TEST_REPORT.md)。共用约定见 [shared_design.md](shared_design.md)，协作约定见 [ROLES.md](ROLES.md)，教学会话登记见 [SESSIONS.md](SESSIONS.md#milestone-m01)。当前阶段进展由 [STATE.md](STATE.md)定位，演示远程同步回执见[共享收口消息](evidence/M01/communication/handover.txt)。
 
 ## 4. M02：版本清单与配套服务包
 
