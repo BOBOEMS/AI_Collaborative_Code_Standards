@@ -11,7 +11,9 @@
 | 总体目标、版本范围和约束 | [PROJECT.md](PROJECT.md) |
 | 里程碑及验证承接 | [PLAN.md](PLAN.md) |
 | 当前阶段、任务、对象、结果和下一步 | [STATE.md](STATE.md)，并由其定位当前 DESIGN / CASES / REVIEW / TEST_REPORT |
-| 项目协作选择 | [ROLES.md](ROLES.md) |
+| 项目协作选择 | [ROLES.md](ROLES.md)，协作方式和 C 采用边界以 [PROJECT.md](PROJECT.md#c-adoption)为准 |
+| C 编码规范 | [C/AGENTS.md](../../../C/AGENTS.md)，按本次技术领域选读；执行边界见[接入规则](../多AI会话工作流规范.md#c-standards) |
+| 工程及构建/检查配置 | `<实际源码目录、工程细则及权威构建/检查入口>`，真实采用前填写；不据占位符声明已构建或通过 |
 | 模型、真实绑定及唯一配置 | [SESSIONS.md](SESSIONS.md) → [project.sessions.json](project.sessions.json) |
 | 共用技术约定 | [shared_design.md](shared_design.md) |
 | 重要决定与事件、内部工具 | [records/INDEX.md](records/INDEX.md)、[tools/INDEX.md](tools/INDEX.md) |

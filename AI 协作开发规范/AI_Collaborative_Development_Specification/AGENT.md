@@ -18,6 +18,7 @@
 | 划分里程碑 | [里程碑设计规范](里程碑设计规范.md) | `PLAN.md` |
 | 当前里程碑具体设计、用例和结果文件 | [阶段文件要求](里程碑设计规范.md#milestone-files) | 当前阶段 DESIGN / CASES / REVIEW / TEST_REPORT |
 | 实现、自测、审核或验证 | [共同底线](多AI会话工作流规范.md#runtime-core)、[角色及动作读取表](多AI会话工作流规范.md#session-recovery) | 项目授权、当前任务及相关设计、工程细则和证据 |
+| C/H 编码、自检或审核 | [C 语言规范接入](多AI会话工作流规范.md#c-standards) | 项目登记的 C 入口、采用范围、源码及现有构建/检查配置 |
 | 文档或内部工具维护 | [写法](文档组织与维护.md#2-文档书写与术语说明)、[目录](文档组织与维护.md#project-layout)、[工具](文档组织与维护.md#internal-tools)、[记录与证据](文档组织与维护.md#record-policy)的相应部分 | 对应成果、索引及必要原件 |
 | 会话调用、切换或故障 | [工具接入](多AI会话工作流规范.md#tool-integration)及所用操作、适配器说明 | SESSIONS 指向的唯一配置、本组绑定和原任务 |
 
