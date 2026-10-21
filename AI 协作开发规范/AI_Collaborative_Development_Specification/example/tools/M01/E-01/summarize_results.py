@@ -5,10 +5,12 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
-SOURCES = ("evidence/M01/R01/results.csv", "evidence/M01/R02/results.csv")
+SOURCES = ("evidence/M01/R01/results.csv", "evidence/M01/R02/results.csv",
+           "evidence/M01/R03/results.csv")
 CANDIDATE = "DEMO-M01-R2"
-REUSE = {"M01-T01", "M01-T03", "M01-T06"}
-CASES = {f"M01-T{number:02d}" for number in range(1, 7)}
+REUSE_R1 = {"M01-T01", "M01-T03", "M01-T06"}
+REUSE = {f"M01-T{number:02d}" for number in range(1, 7)}
+CASES = {f"M01-T{number:02d}" for number in range(1, 8)}
 
 
 def summarize():
@@ -31,18 +33,18 @@ def summarize():
             records.append({**row, "source_csv": source})
     selected = []
     for case_id in sorted(CASES):
-        candidate = "DEMO-M01-R1" if case_id in REUSE else CANDIDATE
+        candidate = "DEMO-M01-R1" if case_id in REUSE_R1 else CANDIDATE
         matches = [row for row in records
                    if row["case_id"] == case_id and row["candidate"] == candidate]
         if len(matches) != 1:
             raise ValueError(f"{case_id}: missing approved result")
         selected.append({**matches[0],
-                         "reuse_basis": "C-REUSE-01" if case_id in REUSE else ""})
+                          "reuse_basis": "C-REUSE-02" if case_id in REUSE else ""})
     prior_failures = [{"candidate": row["candidate"], "case_id": row["case_id"],
                        "source_csv": row["source_csv"]}
                       for row in records if row["result"] == "FAIL"]
     return {"kind": "DEMO_ONLY", "accepted_candidate": CANDIDATE,
-            "case_set": "DEMO-CASES-M01-01", "results": selected,
+            "case_set": "DEMO-CASES-M01-02", "results": selected,
             "prior_failures": prior_failures,
             "all_cases_pass": all(row["result"] == "PASS" for row in selected),
             "board_tests_executed_by_this_tool": False}

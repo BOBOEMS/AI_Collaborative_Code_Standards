@@ -4,24 +4,27 @@
 
 ## 1. 对象与环境
 
-教学初轮候选 DEMO-M01-R1，修正轮 DEMO-M01-R2；用例集 DEMO-CASES-M01-01。场景假定具备配对固件、蓝牙主机、合格测试包和可保护现场的设备；这些真实对象、哈希与连接均未提供，不可按本例运行设备操作。
+教学初轮候选 DEMO-M01-R1，修正候选 DEMO-M01-R2；R01/R02 使用原用例集 DEMO-CASES-M01-01，R03 在同一 R2 候选上按 DEMO-CASES-M01-02 补充 T07。场景假定具备配对固件、蓝牙主机、合格测试包和可保护现场的设备；这些真实对象、哈希与连接均未提供，不可按本例运行设备操作。
 
 ## 2. 当前有效结果
 
 | 用例 | 当前教学结果 | 候选 / 轮次 | 原始依据及限制 |
 |---|---|---|---|
-| M01-T01 | PASS | R1 / R01，C-REUSE-01 复用 | [R01 数据](../../evidence/M01/R01/results.csv)与[观察日志](../../evidence/M01/R01/observations.log)，仅启动确认 |
-| M01-T02 | PASS | R2 / R02 复测 | [R02 数据](../../evidence/M01/R02/results.csv)与[观察日志](../../evidence/M01/R02/observations.log) |
-| M01-T03 | PASS | R1 / R01，C-REUSE-01 复用 | R01 数据，证明约定坏包代表拒绝 |
-| M01-T04 | PASS | R2 / R02 复测 | R02 数据，有限试用失败恢复代表场景 |
-| M01-T05 | PASS | R2 / R02 复测 | R01 为 FAIL，原件保留；R02 教学前后内容一致 |
-| M01-T06 | PASS | R1 / R01，C-REUSE-01 复用 | R01 数据，仅一个受控复位代表点，不是实际掉电 |
+| M01-T01 | PASS | R1 / R01，C-REUSE-02 复用 | [R01 数据](../../evidence/M01/R01/results.csv)与[观察日志](../../evidence/M01/R01/observations.log)，仅启动确认；R1→R2 依据仍为 C-REUSE-01 |
+| M01-T02 | PASS | R2 / R02，C-REUSE-02 复用 | [R02 数据](../../evidence/M01/R02/results.csv)与[观察日志](../../evidence/M01/R02/observations.log)，健康 App 发起升级 |
+| M01-T03 | PASS | R1 / R01，C-REUSE-02 复用 | R01 数据，约定坏包代表拒绝；R1→R2 依 C-REUSE-01 |
+| M01-T04 | PASS | R2 / R02，C-REUSE-02 复用 | R02 数据，有限试用失败恢复代表场景 |
+| M01-T05 | PASS | R2 / R02，C-REUSE-02 复用 | R01 为 FAIL，原件保留；R02 无备份拒绝且教学前后内容一致 |
+| M01-T06 | PASS | R1 / R01，C-REUSE-02 复用 | R01 数据，一个受控复位代表点；R1→R2 依 C-REUSE-01，不是实际掉电 |
+| M01-T07 | PASS | R2 / R03 补充验证 | [R03 数据](../../evidence/M01/R03/results.csv)与[观察日志](../../evidence/M01/R03/observations.log)，App 不可用时从 Boot 维修入口在合格备份下安装并确认新 App |
 
-复用须以[C 当前结论](REVIEW.md#3-复用依据-c-reuse-01)为前提。E 工具生成的[汇总](../../evidence/M01/R02/summary.json)逐项保存来源和复用标识，不能凭汇总生成实物通过。
+复用须以[C 当前结论](REVIEW.md#reuse-current)为前提。当前[汇总示例](../../evidence/M01/R03/summary.json)逐项保存来源和复用标识，结构供 E 的整理工具使用，不能凭汇总生成实物通过。R02 旧汇总保留原六项范围，不能证明尚未包含的 T07。
 
 ## 3. 问题、未测和交付
 
 初轮 T05 暴露已确认功能未实现，E 停止相关操作并回报 A；C 审核后给出实现修正要求，由 A 派发 D 修正并安排后续复测。复杂因果只在[事件记录](../../records/M01/20261019-repair-guard.md)说明，E 复测交付见[通信归档第 06 条](../../evidence/M01/communication/handover.txt)；本报告和各轮原件承载结果，不另抄 E 过程记录。
+
+六项旧用例未覆盖 F-05 的维修成功条件，不能以旧结果宣称功能覆盖完整。教学过程在同一 M01 内补充 T07，经 C 审核后由 A 派发 E，R03 的补充交付见通信第 12 条，C 证据结论见第 14 条；不重写 R01/R02，也不虚构已经做过该项验证。
 
 M03 的 4G 和 URL 持久化、M04 的完整采集/阀门/上报等业务、实际掉电、完整故障矩阵和长期压力均未执行。本阶段当前教学范围通过，不表示全版本验收。
 

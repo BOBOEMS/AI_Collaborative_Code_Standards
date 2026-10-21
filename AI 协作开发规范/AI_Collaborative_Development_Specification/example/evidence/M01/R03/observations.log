@@ -1,0 +1,8 @@
+DEMO_ONLY - synthetic supplemental scenario, no firmware or board was executed.
+M01-T07 candidate=DEMO-M01-R2 case_set=DEMO-CASES-M01-02
+M01-T07 current_app_usable=no entry=boot_maintenance entry_confirmed=yes
+M01-T07 existing_backup_entity_checked=yes backup_valid=yes package_valid=yes
+M01-T07 maintenance_admitted=yes new_image_installed=yes
+M01-T07 expected_new_app_identity=yes new_app_confirmed=yes result=PASS
+R01 and R02 remain unchanged. Their six cases are reused only under C-REUSE-02.
+These are teaching statements, not measurements or evidence of real execution.

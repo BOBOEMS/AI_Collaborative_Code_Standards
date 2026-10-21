@@ -2,7 +2,7 @@
 
 | 脚本 | 用途 |
 |---|---|
-| [verify_evidence.py](verify_evidence.py) | 独立检查教学汇总的六项覆盖、原始行、结果、候选、允许复用清单和日志存在性 |
+| [verify_evidence.py](verify_evidence.py) | 独立检查当前教学汇总的七项覆盖、原始行、结果、候选、允许复用清单和日志存在性 |
 
 来源：为本整套示例编写，不调用 E 的解析代码。使用 Python 标准库：
 
@@ -11,6 +11,6 @@ python -B tools/M01/C-01/verify_evidence.py
 python -B tools/M01/C-01/verify_evidence.py --summary <待核对汇总文件>
 ```
 
-脚本只读，检查通过返回 0，不一致或证据文件缺失返回非零。最终候选和允许复用清单取自本例 [C-REUSE-01](../../../milestones/M01/REVIEW.md#3-复用依据-c-reuse-01)。
+脚本只读，默认读取 R03 当前汇总；检查通过返回 0，不一致或证据文件缺失返回非零。最终候选和当前允许复用清单取自本例 [C-REUSE-02](../../../milestones/M01/REVIEW.md#reuse-current)，其中 R1→R2 的原影响判断仍引用 C-REUSE-01。本脚本按当前七项规则核对，不能用于将 R02 六项旧汇总判成当前完整覆盖。
 
 本工具证明的只是教学材料关联。它不证明日志真实、不证明目标条件确已发生、不审核生产源码，也不能替代 E 实测或 C 人工判断。

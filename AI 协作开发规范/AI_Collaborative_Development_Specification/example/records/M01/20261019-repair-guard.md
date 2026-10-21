@@ -20,10 +20,12 @@ C 针对修正给出 R2 的可执行组合并回报 A，A 为 E 派发复测任�
 
 - [R01 原始数据](../../evidence/M01/R01/results.csv)及[观察日志](../../evidence/M01/R01/observations.log)保留 T05 FAIL，没有被后续通过覆盖。
 - [R02 数据](../../evidence/M01/R02/results.csv)及[观察日志](../../evidence/M01/R02/observations.log)承载针对复测。
-- [汇总](../../evidence/M01/R02/summary.json)为 E 从合成数据生成的派生材料，不能替代来源或证明实物通过。
+- [R02 旧汇总](../../evidence/M01/R02/summary.json)保留当时六项范围，不能替代来源或证明实物通过。
+
+后来核对功能覆盖时发现“合格备份下 Boot 维修成功”未测；这不推翻已有单项结果，但此前阶段覆盖结论不足。E 在同一 M01 补充 T07，C 审核后由 A 派发，另存 [R03 数据](../../evidence/M01/R03/results.csv)和[观察日志](../../evidence/M01/R03/observations.log)。没有生产修改，当前复用依据和[七项汇总](../../evidence/M01/R03/summary.json)沿 REVIEW/TEST_REPORT 定位，R01/R02 不改写。
 
 ## 4. 关键交流与边界
 
-[共享交接原件示例](../../evidence/M01/communication/handover.txt)选取九条合成消息，展示 E/D/C 对各自任务的回报、A 的独立任务派发及阶段收口。没有列出全部常规通知；实际工作仍须先派发再回报，不另建逐角色交接文件或编号表。
+[共享交接原件示例](../../evidence/M01/communication/handover.txt)选取十五条合成消息；前九条保留原维修准入修正及当时的收口，后六条演示补齐漏测后重新核对当前阶段条件。没有列出全部常规通知；实际工作仍须先派发再回报，不另建逐角色交接文件或编号表。
 
 通信文件不是实际工具日志或真实回执。当前阶段由 [STATE.md](../../STATE.md)维护，实际掉电、完整故障矩阵、4G、URL 持久化和整机业务范围按计划与当前报告保留未测。离线工具只处理教学数据，不证明生产实现或设备行为。

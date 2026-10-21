@@ -1,0 +1,79 @@
+{
+  "kind": "DEMO_ONLY",
+  "accepted_candidate": "DEMO-M01-R2",
+  "case_set": "DEMO-CASES-M01-02",
+  "results": [
+    {
+      "kind": "DEMO_ONLY",
+      "candidate": "DEMO-M01-R1",
+      "case_id": "M01-T01",
+      "result": "PASS",
+      "evidence_file": "evidence/M01/R01/observations.log",
+      "source_csv": "evidence/M01/R01/results.csv",
+      "reuse_basis": "C-REUSE-02"
+    },
+    {
+      "kind": "DEMO_ONLY",
+      "candidate": "DEMO-M01-R2",
+      "case_id": "M01-T02",
+      "result": "PASS",
+      "evidence_file": "evidence/M01/R02/observations.log",
+      "source_csv": "evidence/M01/R02/results.csv",
+      "reuse_basis": "C-REUSE-02"
+    },
+    {
+      "kind": "DEMO_ONLY",
+      "candidate": "DEMO-M01-R1",
+      "case_id": "M01-T03",
+      "result": "PASS",
+      "evidence_file": "evidence/M01/R01/observations.log",
+      "source_csv": "evidence/M01/R01/results.csv",
+      "reuse_basis": "C-REUSE-02"
+    },
+    {
+      "kind": "DEMO_ONLY",
+      "candidate": "DEMO-M01-R2",
+      "case_id": "M01-T04",
+      "result": "PASS",
+      "evidence_file": "evidence/M01/R02/observations.log",
+      "source_csv": "evidence/M01/R02/results.csv",
+      "reuse_basis": "C-REUSE-02"
+    },
+    {
+      "kind": "DEMO_ONLY",
+      "candidate": "DEMO-M01-R2",
+      "case_id": "M01-T05",
+      "result": "PASS",
+      "evidence_file": "evidence/M01/R02/observations.log",
+      "source_csv": "evidence/M01/R02/results.csv",
+      "reuse_basis": "C-REUSE-02"
+    },
+    {
+      "kind": "DEMO_ONLY",
+      "candidate": "DEMO-M01-R1",
+      "case_id": "M01-T06",
+      "result": "PASS",
+      "evidence_file": "evidence/M01/R01/observations.log",
+      "source_csv": "evidence/M01/R01/results.csv",
+      "reuse_basis": "C-REUSE-02"
+    },
+    {
+      "kind": "DEMO_ONLY",
+      "candidate": "DEMO-M01-R2",
+      "case_id": "M01-T07",
+      "result": "PASS",
+      "evidence_file": "evidence/M01/R03/observations.log",
+      "source_csv": "evidence/M01/R03/results.csv",
+      "reuse_basis": ""
+    }
+  ],
+  "prior_failures": [
+    {
+      "candidate": "DEMO-M01-R1",
+      "case_id": "M01-T05",
+      "source_csv": "evidence/M01/R01/results.csv"
+    }
+  ],
+  "all_cases_pass": true,
+  "board_tests_executed_by_this_tool": false
+}

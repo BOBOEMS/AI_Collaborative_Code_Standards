@@ -12,17 +12,17 @@ def audit(summary):
         raise ValueError("summary is not DEMO_ONLY")
     if summary["accepted_candidate"] != "DEMO-M01-R2":
         raise ValueError("unapproved final candidate")
-    if summary["case_set"] != "DEMO-CASES-M01-01":
+    if summary["case_set"] != "DEMO-CASES-M01-02":
         raise ValueError("unapproved case set")
     if summary.get("board_tests_executed_by_this_tool") is not False:
         raise ValueError("offline tool must not claim board execution")
-    expected = {f"M01-T{number:02d}" for number in range(1, 7)}
+    expected = {f"M01-T{number:02d}" for number in range(1, 8)}
     rows = summary["results"]
     if len(rows) != len(expected) or {row["case_id"] for row in rows} != expected:
         raise ValueError("missing or duplicate case results")
     raw = {}
     failures = set()
-    for round_name in ("R01", "R02"):
+    for round_name in ("R01", "R02", "R03"):
         relative = f"evidence/M01/{round_name}/results.csv"
         with (ROOT / relative).open(encoding="utf-8", newline="") as stream:
             for record in csv.DictReader(stream):
@@ -37,8 +37,9 @@ def audit(summary):
         case_id = row["case_id"]
         candidate = "DEMO-M01-R1" if case_id in reuse_cases else "DEMO-M01-R2"
         source = ("evidence/M01/R01/results.csv" if case_id in reuse_cases
+                  else "evidence/M01/R03/results.csv" if case_id == "M01-T07"
                   else "evidence/M01/R02/results.csv")
-        reuse_basis = "C-REUSE-01" if case_id in reuse_cases else ""
+        reuse_basis = "" if case_id == "M01-T07" else "C-REUSE-02"
         if row["candidate"] != candidate or row["source_csv"] != source:
             raise ValueError(f"{case_id}: unapproved source or candidate")
         if row["reuse_basis"] != reuse_basis:
@@ -68,7 +69,7 @@ def audit(summary):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--summary", type=Path,
-                        default=ROOT / "evidence/M01/R02/summary.json")
+                        default=ROOT / "evidence/M01/R03/summary.json")
     args = parser.parse_args()
     try:
         report = audit(json.loads(args.summary.read_text(encoding="utf-8")))

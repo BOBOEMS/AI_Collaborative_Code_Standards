@@ -11,9 +11,9 @@
 | 当前方案 | [M01 设计](milestones/M01/DESIGN.md)、[共用约定](shared_design.md)、[范围确认](records/decisions/20261019-M01-scope.md) |
 | 当前候选 | DEMO-M01-R2；仅教学标识，不是实际固件或 Git 提交 |
 | 实现及审核 | 无备份维修准入错误已在场景中修正；C 对实现、用例、验证证据分别通过，见 [REVIEW.md](milestones/M01/REVIEW.md) |
-| 正式验证 | 六项代表场景的当前教学结果为 PASS；R1 的 T05 FAIL 原件保留，R2 针对复测 T02/T04/T05；其余由 C 核对后复用 |
+| 正式验证 | 七项代表场景当前教学结果为 PASS；R03 在同一 R2 候选补齐 Boot 维修成功 T07，原六项按 C-REUSE-02 复用；R01 T05 FAIL 和 R02 旧汇总均保留 |
 | 未覆盖 | M02 版本包、M03 4G 与 URL 持久化、M04 完整业务；实际掉电、完整故障矩阵和长期压力未执行 |
-| Git 与资源 | 场景内各角色已提交，阶段回执及资源交接见[共享收口消息第 09 条](evidence/M01/communication/handover.txt)；实际未执行这些提交、推送或工具派发 |
+| Git 与资源 | 场景内各角色已提交，当前阶段回执及资源交接见[共享收口消息第 15 条](evidence/M01/communication/handover.txt)；第 09 条是漏项补齐前的旧说明，实际未执行这些提交、推送或工具派发 |
 | 唯一下一步 | 等待用户决定是否授权启动 M02；尚缺该项启动决定。获准后新建全组 ABCDE，由新 B 细化并确认 M02 具体方案 |
 
 本地离线工具运行只证明样例处理逻辑，不产生实物结果。原项目已知 URL 保存 FAIL 及未测范围保持不变，来源见 [示例说明](README.md#source-facts)。
