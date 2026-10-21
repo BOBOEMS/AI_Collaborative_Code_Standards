@@ -1,34 +1,27 @@
 # 示例项目 AI 入口
 
-本文件模拟项目 `AI/AGENT.md`。本目录为唯一协作文档根目录，所有角色和工作树引用同一处。采用[协议入口](../AGENT.md)及其总体方案、里程碑、工作流和文档维护四份正文；项目 `README.md` 用于介绍，AI 按需阅读。
+本目录模拟项目唯一的 `AI/` 协作文档目录，所有角色和工作树共用。采用[协议入口](../AGENT.md)及其四份正文，按任务读取；本项目 `README.md` 仅供介绍和学习。
 
-## 1. 稳定项目约定与材料入口
+## 1. 项目约定、授权与入口
 
-本套为 OTA 教学文档。允许阅读、编辑教学材料及使用现有 Python 运行本例离线辅助脚本；未提供真实板卡、会话或推送目标，不从示例参数推断实际设备与运行权限。
+本套为 OTA 教学材料。允许阅读、编辑及使用现有 Python 处理示例离线数据；未提供真实设备、会话或推送目标，不从占位参数推断运行权限。
 
 | 材料 | 唯一入口 |
 |---|---|
-| 总体目标、范围与工作深度 | [PROJECT.md](PROJECT.md) |
-| 里程碑计划 | [PLAN.md](PLAN.md) |
-| 当前阶段、组编号、责任角色、对象及下一步 | [STATE.md](STATE.md)；当前 DESIGN/CASES/REVIEW/TEST_REPORT 沿该状态和计划定位 |
-| 项目角色、协作、交接与 Git 规则 | [ROLES.md](ROLES.md) |
-| 模型目标、实际会话分组、参数核验和替换依据 | [SESSIONS.md](SESSIONS.md)为阅读入口，唯一结构化来源为 [project.sessions.json](project.sessions.json) |
-| 共用技术设计 | [shared_design.md](shared_design.md)，需要分册时更新到实际共用设计入口 |
-| 重要决定和按需事件 | [records/INDEX.md](records/INDEX.md)；普通交付由当前成果、提交及共享消息定位 |
-| 内部工具 | [tools/INDEX.md](tools/INDEX.md) |
-| 会话调用 | [统一工具说明](../session_handover_tool/README.md)、[已有验证记录](../session_handover_tool/VALIDATION.md)；调用方式见 [ROLES.md](ROLES.md#handoff) |
-| Git 配置入口 | `<实际项目仓库及其已确认分支/上游配置>`，实际使用前填写并核对；成果汇合分工与推送责任见 [ROLES.md](ROLES.md#project-git) |
+| 总体目标、版本范围和约束 | [PROJECT.md](PROJECT.md) |
+| 里程碑及验证承接 | [PLAN.md](PLAN.md) |
+| 当前阶段、任务、对象、结果和下一步 | [STATE.md](STATE.md)，并由其定位当前 DESIGN / CASES / REVIEW / TEST_REPORT |
+| 项目协作选择 | [ROLES.md](ROLES.md) |
+| 模型、真实绑定及唯一配置 | [SESSIONS.md](SESSIONS.md) → [project.sessions.json](project.sessions.json) |
+| 共用技术约定 | [shared_design.md](shared_design.md) |
+| 重要决定与事件、内部工具 | [records/INDEX.md](records/INDEX.md)、[tools/INDEX.md](tools/INDEX.md) |
+| 会话调用 | [统一工具](../session_handover_tool/README.md)及[已有验证范围](../session_handover_tool/VALIDATION.md) |
+| Git 配置 | `<实际项目仓库及已确认分支/上游配置>`；汇合及推送责任见 [ROLES.md](ROLES.md#project-git) |
 
-真实工程采用时，在此登记生产源码目录、适用子目录工程与语言细则、权限依据，以及唯一 Git 配置的实际入口。入口保持稳定，当前阶段、候选和任务进度由 STATE 维护；文件、工具与 Git 的详细规则沿 ROLES 及其引用的规范取得。
+教学实施授权仅覆盖 M01，依据为[范围确认](records/decisions/20261019-M01-scope.md#范围和确认依据)。后续阶段是否已获准启动沿 STATE 读取，不从计划存在推断授权。真实工程采用时在此补充源码、子目录细则、真实用户授权和上述 Git 入口，当前进度不写回本文件。
 
-教学场景中的实施授权仅覆盖 M01，依据见[范围和确认记录](records/decisions/20261019-M01-scope.md#范围和确认依据)；M02～M04 保留为后续规划。M02 开始前尚需取得启动授权，该等待事项由 STATE 说明。实际项目在此登记真实用户授权及允许接续的范围，不从计划存在推断全部实施已获批准。
+工具配置通过 `SESSION_TOOL_PROJECT_ROOT`、`SESSION_TOOL_DOCUMENTS_ROOT` 定位实际目录，运行位置沿唯一配置。本例授权和真实绑定为空，消息及回执均为合成材料，不能据此创建会话或派发实际任务。
 
-统一工具配置通过 `SESSION_TOOL_PROJECT_ROOT`、`SESSION_TOOL_DOCUMENTS_ROOT` 指向实际工程和协作文档根目录，运行根目录沿配置使用。本例授权字段为空、真实绑定为空，消息及回报均为教学材料；不据此创建会话或派发实际任务。操作工具时按需读取其 README，项目 README 仍仅作介绍。
+## 2. 启动与恢复
 
-## 2. 新会话与压缩恢复
-
-每次新会话、个别替换、上下文压缩或中断恢复，在继续相关动作前取得本文件、[协议入口](../AGENT.md)、[工作流恢复要求](../多AI会话工作流规范.md#session-recovery)和 [ROLES.md](ROLES.md#project-recovery)的当前原文。
-
-读取 STATE 中的当前阶段、组编号和获批任务，再沿 SESSIONS 取得该组真实绑定与相关配置；读取当前版本范围、阶段计划和有效设计，用例及证据按角色补读。摘要只用于定位，已完整加载的有效原文可直接使用。
-
-先核对已发送任务、运行对象和资源，首次正常回报简述阶段、角色、对象及下一步。阶段进入和实质方案变化沿现有授权，压缩本身不创建任务、更换组或重新审批仍有效方案。
+执行[工作流的共同读取清单及角色/动作表](../多AI会话工作流规范.md#session-recovery)，按上表取得项目材料的相关当前原文；不在本入口重列清单。必须恢复当前任务依赖的总约束和共用契约，摘要只帮助定位。
